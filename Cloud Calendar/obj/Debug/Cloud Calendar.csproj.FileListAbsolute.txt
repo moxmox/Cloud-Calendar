@@ -1,0 +1,10 @@
+C:\Users\zemcd\source\repos\Cloud Calendar\Cloud Calendar\bin\Debug\Cloud Calendar.exe.config
+C:\Users\zemcd\source\repos\Cloud Calendar\Cloud Calendar\bin\Debug\Cloud Calendar.exe
+C:\Users\zemcd\source\repos\Cloud Calendar\Cloud Calendar\bin\Debug\Cloud Calendar.pdb
+C:\Users\zemcd\source\repos\Cloud Calendar\Cloud Calendar\obj\Debug\Cloud Calendar.csprojAssemblyReference.cache
+C:\Users\zemcd\source\repos\Cloud Calendar\Cloud Calendar\obj\Debug\Cloud_Calendar.Form1.resources
+C:\Users\zemcd\source\repos\Cloud Calendar\Cloud Calendar\obj\Debug\Cloud_Calendar.Properties.Resources.resources
+C:\Users\zemcd\source\repos\Cloud Calendar\Cloud Calendar\obj\Debug\Cloud Calendar.csproj.GenerateResource.cache
+C:\Users\zemcd\source\repos\Cloud Calendar\Cloud Calendar\obj\Debug\Cloud Calendar.csproj.CoreCompileInputs.cache
+C:\Users\zemcd\source\repos\Cloud Calendar\Cloud Calendar\obj\Debug\Cloud Calendar.exe
+C:\Users\zemcd\source\repos\Cloud Calendar\Cloud Calendar\obj\Debug\Cloud Calendar.pdb
