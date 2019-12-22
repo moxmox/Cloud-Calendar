@@ -12,8 +12,10 @@ namespace Cloud_Calendar
 {
     public partial class Form1 : Form
     {
-        TableLayoutPanel tableLayout = new DoubleBufferLayoutPanel();
-        Label monthLabel = new Label();
+        TableLayoutPanel TableLayout = new DoubleBufferLayoutPanel();
+        Label MonthLabel = new Label();
+        Button LeftButton = new Button();
+        Button RightButton = new Button();
 
         public Form1()
         {
@@ -22,53 +24,75 @@ namespace Cloud_Calendar
             this.Text = "Cloud Calendar";
             this.MinimumSize = new Size(700, 700);
 
-            monthLabel.Location = new Point((this.Width / 2) - (monthLabel.Width / 2), 580);
-            monthLabel.Size = new Size(60, 100);
-            monthLabel.Anchor = AnchorStyles.Bottom;
-            monthLabel.Text = "January";
+            String DateNTime = "It is Currently " + DateTime.Now.ToString("MMMM dd");
 
-            tableLayout.Padding = new Padding(40, 30, 40, 40);
-            tableLayout.ColumnCount = 7;
-            tableLayout.RowCount = 5;
-            tableLayout.Location = new Point(0, 10);
-            tableLayout.CellBorderStyle = TableLayoutPanelCellBorderStyle.Inset;
-            tableLayout.Size = new Size((this.Width), (this.Height-100));
-            tableLayout.Anchor = AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Left;
+            MonthLabel.Location = new Point((this.Width / 2) - (MonthLabel.Width / 2), 580);
+            MonthLabel.Size = new Size(150, 100);
+            MonthLabel.Anchor = AnchorStyles.Bottom;
+            MonthLabel.Text = DateNTime;
 
-            Button rightButton = new Button();
-            rightButton.Text = "Right";
-            rightButton.Size = new Size(80, 20);
-            rightButton.Location = new Point(this.Width-110, 600);
-            rightButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            Button leftButton = new Button();
-            leftButton.Text = "Left";
-            leftButton.Size = new Size(80, 20);
-            leftButton.Location = new Point(10, 600);
-            leftButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            TableLayout.Padding = new Padding(40, 30, 40, 40);
+            TableLayout.ColumnCount = 7;
+            TableLayout.RowCount = 5;
+            TableLayout.Location = new Point(0, 10);
+            TableLayout.CellBorderStyle = TableLayoutPanelCellBorderStyle.Inset;
+            TableLayout.Size = new Size((this.Width), (this.Height-100));
+            TableLayout.Anchor = AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Left;
 
-            this.Controls.Add(monthLabel);
-            this.Controls.Add(tableLayout);
-            this.Controls.Add(rightButton);
-            this.Controls.Add(leftButton);
+            RightButton.Text = "Right";
+            RightButton.Name = "RightButton";
+            RightButton.Size = new Size(80, 20);
+            RightButton.Location = new Point(this.Width-110, 600);
+            RightButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            RightButton.Click += new EventHandler(LeftRightButton_Click);
+            LeftButton.Text = "Left";
+            LeftButton.Name = "LeftButton";
+            LeftButton.Size = new Size(80, 20);
+            LeftButton.Location = new Point(10, 600);
+            LeftButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            LeftButton.Click += new EventHandler(LeftRightButton_Click);
+
+            this.Controls.Add(MonthLabel);
+            this.Controls.Add(TableLayout);
+            this.Controls.Add(RightButton);
+            this.Controls.Add(LeftButton);
+        }
+
+        private void LeftRightButton_Click(object sender, EventArgs e)
+        {
+            if (((Button)sender).Name.Equals(RightButton.Name))
+            {
+                MessageBox.Show("Right");
+            }
+            else if (((Button)sender).Name.Equals(LeftButton.Name))
+            {
+                MessageBox.Show("Left");
+            }
+        }
+
+        private void CellLabel_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("A Cell has Been Clicked");
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            this.tableLayout.SuspendLayout();
-            for (int col = 0; col <= tableLayout.ColumnCount-1; col++)
+            this.TableLayout.SuspendLayout();
+            for (int col = 0; col <= TableLayout.ColumnCount-1; col++)
             {
-                tableLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
-                for (int row = 0; row <= tableLayout.RowCount-1; row++)
+                TableLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
+                for (int row = 0; row <= TableLayout.RowCount-1; row++)
                 {
-                    tableLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
-                    Label temp_lable = new Label();
-                    temp_lable.Text = "label:" + row.ToString();
-                    temp_lable.TextAlign = ContentAlignment.MiddleCenter;
-                    temp_lable.Dock = DockStyle.Fill;
-                    tableLayout.Controls.Add(temp_lable, col, row);
+                    TableLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
+                    Label CellLabel = new Label();
+                    CellLabel.Text = "label:" + row.ToString();
+                    CellLabel.TextAlign = ContentAlignment.MiddleCenter;
+                    CellLabel.Dock = DockStyle.Fill;
+                    CellLabel.Click += new EventHandler(CellLabel_Click);
+                    TableLayout.Controls.Add(CellLabel, col, row);
                 }
             }
-            tableLayout.ResumeLayout();
+            TableLayout.ResumeLayout();
         }
     }
 }
