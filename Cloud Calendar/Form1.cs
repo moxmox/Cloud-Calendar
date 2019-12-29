@@ -56,6 +56,8 @@ namespace Cloud_Calendar
 
         private void LoadMonth ()
         {
+            Controller.SelectedDay = DateController.NONE_SELECTED;
+            ResetColors();
             int DaysInMonth = DateTime.DaysInMonth(Controller.Focused.Year, Controller.Focused.Month);
             DateTime FirstOfTheMonth = new DateTime(Controller.Focused.Year, Controller.Focused.Month, 1);
             int InitialOffset;
@@ -81,6 +83,7 @@ namespace Cloud_Calendar
 
         private void LeftRightButton_Click(object sender, EventArgs e)
         {
+            ResetColors();
             if (((Button)sender).Name.Equals(RightButton.Name))
             {
                 Controller.AddMonth();
@@ -95,7 +98,9 @@ namespace Cloud_Calendar
 
         private void CellLabel_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("A Cell has Been Clicked");
+            ResetColors();
+            (sender as Label).BackColor = Color.LightCoral;
+            Controller.SelectedDay = int.Parse((sender as Label).Text);
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -133,6 +138,12 @@ namespace Cloud_Calendar
             TableLayout.ResumeLayout();
         }
 
-
+        private void ResetColors()
+        {
+            foreach (Label label in CellLabels)
+            {
+                label.BackColor = SystemColors.Control;
+            }
+        }
     }
 }

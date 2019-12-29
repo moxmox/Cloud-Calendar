@@ -9,10 +9,13 @@ namespace Cloud_Calendar
 {
     class DateController
     {
+        public static int NONE_SELECTED = -1;
+
         private static DateController Instance;
         public DateTime Now { get; set; }
         public DateTime Focused { get; set; }
         public int Month { get; set; }
+        public int SelectedDay { get; set; }
 
         private DateController()
         {
@@ -34,7 +37,7 @@ namespace Cloud_Calendar
             return DateTime.DaysInMonth(Focused.Year, Focused.Month);
         }
 
-        public String GetStringMonth()
+        public string GetStringMonth()
         {
             switch (Focused.Month)
             {
@@ -83,5 +86,6 @@ namespace Cloud_Calendar
                 Focused = Focused.AddMonths(-1);
             }
         }
+
     }
 }
