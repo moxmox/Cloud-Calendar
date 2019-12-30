@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Data;
+using MySql.Data;
+using MySql.Data.MySqlClient;
 
 namespace Cloud_Calendar
 {
@@ -13,6 +16,7 @@ namespace Cloud_Calendar
         Button LeftButton = new Button();
         Button RightButton = new Button();
         List<Label> CellLabels = new List<Label>();
+        MySqlConnection connection;
 
         public Form1()
         {
@@ -47,11 +51,25 @@ namespace Cloud_Calendar
             LeftButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             LeftButton.Click += new EventHandler(LeftRightButton_Click);
 
-            this.Controls.Add(MonthLabel);
-            this.Controls.Add(TableLayout);
-            this.Controls.Add(RightButton);
-            this.Controls.Add(LeftButton);
+            Controls.Add(MonthLabel);
+            Controls.Add(TableLayout);
+            Controls.Add(RightButton);
+            Controls.Add(LeftButton);
 
+            DatabaseConnectionController dbController = DatabaseConnectionController.GetInstance();
+            connection = dbController.Connection;
+            string results = "";
+            string sql = "SELECT * FROM event;";
+            MySqlCommand command = new MySqlCommand(sql, connection);
+            MySqlDataReader reader = command.ExecuteReader();
+            while(reader.Read())
+            {
+                results += "ID " + reader.GetInt32(0) + "\n";
+                results += "Date " + reader.GetString(1) + "\n";
+                results += "Description " + reader.GetString(2);
+            }
+            reader.Close();
+            MessageBox.Show(results);
         }
 
         private void LoadMonth ()

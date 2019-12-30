@@ -8,3 +8,11 @@ C:\Users\zemcd\source\repos\Cloud Calendar\Cloud Calendar\obj\Debug\Cloud Calend
 C:\Users\zemcd\source\repos\Cloud Calendar\Cloud Calendar\obj\Debug\Cloud Calendar.csproj.CoreCompileInputs.cache
 C:\Users\zemcd\source\repos\Cloud Calendar\Cloud Calendar\obj\Debug\Cloud Calendar.exe
 C:\Users\zemcd\source\repos\Cloud Calendar\Cloud Calendar\obj\Debug\Cloud Calendar.pdb
+C:\Users\zemcd\source\repos\Cloud Calendar\Cloud Calendar\bin\Debug\BouncyCastle.Crypto.dll
+C:\Users\zemcd\source\repos\Cloud Calendar\Cloud Calendar\bin\Debug\Google.Protobuf.dll
+C:\Users\zemcd\source\repos\Cloud Calendar\Cloud Calendar\bin\Debug\MySql.Data.dll
+C:\Users\zemcd\source\repos\Cloud Calendar\Cloud Calendar\bin\Debug\Renci.SshNet.dll
+C:\Users\zemcd\source\repos\Cloud Calendar\Cloud Calendar\bin\Debug\Google.Protobuf.xml
+C:\Users\zemcd\source\repos\Cloud Calendar\Cloud Calendar\bin\Debug\MySql.Data.xml
+C:\Users\zemcd\source\repos\Cloud Calendar\Cloud Calendar\bin\Debug\Renci.SshNet.xml
+C:\Users\zemcd\source\repos\Cloud Calendar\Cloud Calendar\obj\Debug\Cloud Calendar.csproj.CopyComplete

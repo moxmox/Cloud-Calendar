@@ -26,3 +26,9 @@
 *.ide
 *.pdb
 *.exe
+*.dll
+*.nupkg
+*.ide-shm
+*.ide-wal
+*.csprojf
+*.p7s
