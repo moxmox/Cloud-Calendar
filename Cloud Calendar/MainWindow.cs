@@ -8,7 +8,7 @@ using MySql.Data.MySqlClient;
 
 namespace Cloud_Calendar
 {
-    public partial class Form1 : Form
+    public partial class MainWindow : Form
     {
         TableLayoutPanel TableLayout = new DoubleBufferLayoutPanel();
         DateController Controller = DateController.GetInstance();
@@ -16,9 +16,10 @@ namespace Cloud_Calendar
         Button LeftButton = new Button();
         Button RightButton = new Button();
         List<Label> CellLabels = new List<Label>();
+        List<DayEntry> Days = new List<DayEntry>();
         MySqlConnection connection;
 
-        public Form1()
+        public MainWindow()
         {
             InitializeComponent();
 
@@ -35,7 +36,7 @@ namespace Cloud_Calendar
             TableLayout.RowCount = 6;
             TableLayout.Location = new Point(0, 10);
             TableLayout.CellBorderStyle = TableLayoutPanelCellBorderStyle.Inset;
-            TableLayout.Size = new Size((this.Width), (this.Height-100));
+            TableLayout.Size = new Size((Width), (Height-100));
             TableLayout.Anchor = AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Left;
 
             RightButton.Text = "Right";
@@ -58,18 +59,7 @@ namespace Cloud_Calendar
 
             DatabaseConnectionController dbController = DatabaseConnectionController.GetInstance();
             connection = dbController.Connection;
-            string results = "";
-            string sql = "SELECT * FROM event;";
-            MySqlCommand command = new MySqlCommand(sql, connection);
-            MySqlDataReader reader = command.ExecuteReader();
-            while(reader.Read())
-            {
-                results += "ID " + reader.GetInt32(0) + "\n";
-                results += "Date " + reader.GetString(1) + "\n";
-                results += "Description " + reader.GetString(2);
-            }
-            reader.Close();
-            MessageBox.Show(results);
+            Days = dbController.LoadEntries();
         }
 
         private void LoadMonth ()
@@ -101,27 +91,38 @@ namespace Cloud_Calendar
 
         private void LeftRightButton_Click(object sender, EventArgs e)
         {
+            DatabaseConnectionController dbController = DatabaseConnectionController.GetInstance();
             ResetColors();
             if (((Button)sender).Name.Equals(RightButton.Name))
             {
                 Controller.AddMonth();
+                Days = dbController.LoadEntries();
                 LoadMonth();
+                ColorAppointmentCells();
             }
             else if (((Button)sender).Name.Equals(LeftButton.Name))
             {
                 Controller.SubtractMonth();
+                Days = dbController.LoadEntries();
                 LoadMonth();
+                ColorAppointmentCells();
             }
         }
 
         private void CellLabel_Click(object sender, EventArgs e)
         {
-            ResetColors();
-            (sender as Label).BackColor = Color.LightCoral;
-            Controller.SelectedDay = int.Parse((sender as Label).Text);
+            int selectedDay;
+            if (int.TryParse((sender as Label).Text, out selectedDay))
+            {
+                Controller.SelectedDay = selectedDay;
+                var focused = Controller.Focused;
+                Controller.Focused = new DateTime(focused.Year, focused.Month, selectedDay);
+                CellDialog dialog = new CellDialog(this);
+                dialog.Show();
+            }
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        private void MainWindow_Load(object sender, EventArgs e)
         {
             int DaysInMonth = DateTime.DaysInMonth(Controller.Focused.Year, Controller.Focused.Month);
             DateTime FirstOfTheMonth = new DateTime(Controller.Focused.Year, Controller.Focused.Month, 1);
@@ -154,6 +155,30 @@ namespace Cloud_Calendar
                 CellLabels[i].Text = (j + 1).ToString();
             }
             TableLayout.ResumeLayout();
+            ColorAppointmentCells();
+        }
+
+        private void ColorAppointmentCells()
+        {
+            foreach (DayEntry day in Days)
+            {
+                if (day.HasAppointments())
+                {
+                    foreach (Label label in CellLabels)
+                    {
+                        int text_day;
+                        bool has_text = int.TryParse(label.Text, out text_day);
+                        if (has_text)
+                        {
+                            int apt_day = day.DateInfo.Day;
+                            if (text_day == apt_day)
+                            {
+                                label.BackColor = Color.LightCoral;
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         private void ResetColors()

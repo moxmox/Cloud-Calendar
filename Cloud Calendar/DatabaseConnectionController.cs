@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Windows.Forms;
 using MySql.Data;
@@ -34,6 +35,59 @@ namespace Cloud_Calendar
                 Instance = new DatabaseConnectionController();
             }
             return Instance;
+        }
+                       
+        //TODO: LoadForDay() or work LoadForDay() logic into LoadEntries()
+        //UPDATE: LoadForDay() most likely better sol. (only single DayEntry eliminates need for list changes most of logic)
+        public List<DayEntry> LoadEntries()
+        {
+            DateController controller = DateController.GetInstance();
+            DateTime focused = controller.Focused;
+            List<DayEntry> entries = new List<DayEntry>();
+            for(int i = 0; i < controller.GetDaysInCurrentMonth(); i++)
+            {
+                entries.Add(new DayEntry(new DateTime(focused.Year, focused.Month, i + 1)));
+            }
+            string sql = string.Format("SELECT * FROM event WHERE MONTH(datetime) = {0} AND YEAR(datetime) = {1}", focused.Month, focused.Year);
+            var command = new MySqlCommand(sql, Connection);
+            MySqlDataReader reader = command.ExecuteReader();
+            Appointment temp;
+            while(reader.Read())
+            {
+                DateTime eventDate = reader.GetDateTime("datetime");
+                string description = reader.GetString("description");
+                temp = new Appointment(eventDate, description);
+                foreach(DayEntry entry in entries)
+                {
+                    if(temp.DateInfo.Day == entry.DateInfo.Day)
+                    {
+                        entry.AddAppointment(appointment: temp ,updateDB: false);
+                    }
+                }
+            }
+            reader.Close();
+            return entries;
+        }
+
+        public List<Appointment> LoadForDay()
+        {
+            DateController controller = DateController.GetInstance();
+            DateTime focused = controller.Focused;
+
+            string sql = string.Format("SELECT * FROM event WHERE MONTH(datetime) = {0} AND YEAR(datetime) = {1} AND DAY(datetime) = {2}",
+                            focused.Month, focused.Year, controller.SelectedDay
+                         );
+            var command = new MySqlCommand(sql, Connection);
+            MySqlDataReader reader = command.ExecuteReader();
+            List<Appointment> entries = new List<Appointment>();
+            Appointment temp;
+            while(reader.Read())
+            {
+                temp = new Appointment(reader.GetDateTime("datetime"), reader.GetString("description"));
+                entries.Add(temp);
+            }
+            reader.Close();
+            return entries;
         }
     }
 }
