@@ -14,7 +14,7 @@ namespace Cloud_Calendar
         private readonly Size GENERAL_CONTROL_SIZE = new Size(200, 30);
         private readonly Size BUTTON_SIZE = new Size(100, 20);
 
-        private DateTimePicker AddDatePicker;
+        private DateTimePicker AddTimePicker;
         private WaterMarkTextBox AddDescriptionBox;
         private Button AddButton, RemoveButton, CnclButton;
         private ListView AptListView;
@@ -24,14 +24,16 @@ namespace Cloud_Calendar
         private DatabaseConnectionController DbController;
         private List<Appointment> Appointments;
 
+        public delegate void CellActionCompleteHandler(object sender, CellDialogActionEventArgs args);
+        public event CellActionCompleteHandler ActionCompleted;
         public CellDialog(MainWindow parent)
         {
             DbController = DatabaseConnectionController.GetInstance();
             Controller = DateController.GetInstance();
             CellDate = new DateTime(Controller.Focused.Year, Controller.Focused.Month, Controller.SelectedDay);
-            string title = string.Format("Details for: {0} {1}, {2}", 
-                Controller.GetStringMonth(), 
-                Controller.Focused.Day, 
+            string title = string.Format("Details for: {0} {1}, {2}",
+                Controller.GetStringMonth(),
+                Controller.Focused.Day,
                 Controller.Focused.Year);
             Text = title;
 
@@ -39,9 +41,11 @@ namespace Cloud_Calendar
             ParentWindow.Enabled = false;
             Size = CELLDIALOG_SIZE;
             FormBorderStyle = FormBorderStyle.FixedDialog;
-            AddDatePicker = new DateTimePicker();
-            AddDatePicker.Location = new Point(10, 10);
-            AddDatePicker.Size = GENERAL_CONTROL_SIZE;
+            AddTimePicker = new DateTimePicker();
+            AddTimePicker.Location = new Point(10, 10);
+            AddTimePicker.Size = GENERAL_CONTROL_SIZE;
+            AddTimePicker.Format = DateTimePickerFormat.Time;
+            AddTimePicker.ShowUpDown = true;
             AddDescriptionBox = new WaterMarkTextBox("Enter event description");
             AddDescriptionBox.TextChanged += new EventHandler(AddDescriptionBox_TextChanged);
             AddDescriptionBox.Location = new Point(220, 10);
@@ -52,13 +56,15 @@ namespace Cloud_Calendar
             AddButton.Size = BUTTON_SIZE;
             AddButton.AutoSize = false;
             AddButton.Enabled = false;
+            AddButton.Click += new EventHandler(AddButton_Click);
             AptListView = new ListView();
+            AptListView.Select();
             int lvWidth = Width - 40;
             AptListView.Size = new Size(lvWidth, 100);
             AptListView.Location = new Point(10, 40);
             AptListView.View = View.Details;
-            AptListView.Columns.Add("Date", lvWidth/4, HorizontalAlignment.Left);
-            AptListView.Columns.Add("Description", (lvWidth/4)*3, HorizontalAlignment.Left);
+            AptListView.Columns.Add("Date", lvWidth / 4, HorizontalAlignment.Left);
+            AptListView.Columns.Add("Description", (lvWidth / 4) * 3, HorizontalAlignment.Left);
             AptListView.FullRowSelect = true;
             AptListView.SelectedIndexChanged += new EventHandler(AptListView_SelectedIndexChange);
             RemoveButton = new Button();
@@ -74,24 +80,51 @@ namespace Cloud_Calendar
             CnclButton.Location = new Point(x, 150);
             CnclButton.Click += new EventHandler(CnclButton_Click);
 
-            Controls.Add(AddDatePicker);
+            Controls.Add(AddTimePicker);
             Controls.Add(AddDescriptionBox);
             Controls.Add(AddButton);
             Controls.Add(AptListView);
             Controls.Add(RemoveButton);
             Controls.Add(CnclButton);
 
+            PopulateAppointmentListView();
+
+            FormClosed += new FormClosedEventHandler(CellDialog_Closed);
+        }
+
+        private void PopulateAppointmentListView()
+        {
             Appointments = DbController.LoadForDay();
 
             ListViewItem temp;
-            foreach(Appointment apt in Appointments)
+            foreach (Appointment apt in Appointments)
             {
                 temp = new ListViewItem(apt.DateInfo.ToString());
                 temp.SubItems.Add(apt.Description);
                 AptListView.Items.Add(temp);
             }
+        }
 
-            FormClosed += new FormClosedEventHandler(CellDialog_Closed);
+        private void AddButton_Click(object sender, EventArgs args)
+        {
+            DateTime selected_time = AddTimePicker.Value;
+
+            DateTime date = new DateTime(CellDate.Year,
+                                            CellDate.Month,
+                                            CellDate.Day,
+                                            selected_time.Hour,
+                                            selected_time.Minute,
+                                            selected_time.Second);
+
+            DayEntry dayEntry = new DayEntry(date);
+            string description = AddDescriptionBox.Text;
+            if (dayEntry.AddAppointment(description))
+            {
+                AptListView.Items.Clear();
+                PopulateAppointmentListView();
+                Appointment apt = new Appointment(date, description);
+                ActionCompleted(this, new CellDialogActionEventArgs(CellDate.Day - 1, apt));
+            }
         }
 
         private void CnclButton_Click(object sender, EventArgs args)
@@ -109,7 +142,7 @@ namespace Cloud_Calendar
 
         private void AptListView_SelectedIndexChange(object sender, EventArgs args)
         {
-            if(AptListView.SelectedIndices != null)
+            if (AptListView.SelectedIndices != null)
             {
                 RemoveButton.Enabled = true;
             }
@@ -130,6 +163,17 @@ namespace Cloud_Calendar
         private void CellDialog_Closed(object sender, EventArgs args)
         {
             ParentWindow.Enabled = true;
+        }
+
+        public class CellDialogActionEventArgs
+        {
+            public int Day;
+            public Appointment Appointment;
+            public CellDialogActionEventArgs(int day, Appointment appointment)
+            {
+                Day = day;
+                Appointment = appointment;
+            }
         }
 
     }

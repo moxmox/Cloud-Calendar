@@ -28,16 +28,24 @@ namespace Cloud_Calendar
             }
         }
 
-        public bool AddAppointment(Appointment appointment,bool updateDB)
+        /**
+         * These functions should not interact directly with database; only calls to db should 
+         * be made indirectly through instances of DatabaseConnectionController;
+         *    
+         */
+        public void AddAppointment(Appointment appointment)
         {
-            if(!updateDB)
+            Appointments.Add(appointment);
+        }
+
+        public bool AddAppointment(string description)
+        {
+            DatabaseConnectionController dbController = DatabaseConnectionController.GetInstance();
+            Appointment apt = new Appointment(DateInfo, description);
+            if (dbController.PushAppointment(apt))
             {
-                Appointments.Add(appointment);
+                Appointments.Add(apt);
                 return true;
-            }
-            else
-            {
-                //TODO update database and then add to list
             }
             return false;
         }

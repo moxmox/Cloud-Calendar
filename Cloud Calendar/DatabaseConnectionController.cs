@@ -37,8 +37,6 @@ namespace Cloud_Calendar
             return Instance;
         }
                        
-        //TODO: LoadForDay() or work LoadForDay() logic into LoadEntries()
-        //UPDATE: LoadForDay() most likely better sol. (only single DayEntry eliminates need for list changes most of logic)
         public List<DayEntry> LoadEntries()
         {
             DateController controller = DateController.GetInstance();
@@ -48,7 +46,7 @@ namespace Cloud_Calendar
             {
                 entries.Add(new DayEntry(new DateTime(focused.Year, focused.Month, i + 1)));
             }
-            string sql = string.Format("SELECT * FROM event WHERE MONTH(datetime) = {0} AND YEAR(datetime) = {1}", focused.Month, focused.Year);
+            string sql = string.Format(@"SELECT * FROM event WHERE MONTH(datetime) = {0} AND YEAR(datetime) = {1}", focused.Month, focused.Year);
             var command = new MySqlCommand(sql, Connection);
             MySqlDataReader reader = command.ExecuteReader();
             Appointment temp;
@@ -61,7 +59,7 @@ namespace Cloud_Calendar
                 {
                     if(temp.DateInfo.Day == entry.DateInfo.Day)
                     {
-                        entry.AddAppointment(appointment: temp ,updateDB: false);
+                        entry.AddAppointment(appointment: temp);
                     }
                 }
             }
@@ -74,7 +72,7 @@ namespace Cloud_Calendar
             DateController controller = DateController.GetInstance();
             DateTime focused = controller.Focused;
 
-            string sql = string.Format("SELECT * FROM event WHERE MONTH(datetime) = {0} AND YEAR(datetime) = {1} AND DAY(datetime) = {2}",
+            string sql = string.Format(@"SELECT * FROM event WHERE MONTH(datetime) = {0} AND YEAR(datetime) = {1} AND DAY(datetime) = {2}",
                             focused.Month, focused.Year, controller.SelectedDay
                          );
             var command = new MySqlCommand(sql, Connection);
@@ -88,6 +86,29 @@ namespace Cloud_Calendar
             }
             reader.Close();
             return entries;
+        }
+
+        public bool PushAppointment(Appointment apt)
+        {
+            bool success = false;
+            string sql = @"INSERT INTO event (datetime, description) VALUES (@datetime, @description)";
+            var command = new MySqlCommand(sql, Connection);
+            command.Parameters.AddWithValue("@datetime", apt.DateInfo);
+            command.Parameters.AddWithValue("@description", apt.Description);
+            try
+            {
+                int rowsAffected = command.ExecuteNonQuery();
+                if (rowsAffected > 0)
+                {
+                    success = true;
+                }
+            }
+            catch (MySqlException mysqlx)
+            {
+                string msg = string.Format("An error occured while updating the database: {0}", mysqlx);
+                MessageBox.Show(msg);
+            }
+            return success;
         }
     }
 }

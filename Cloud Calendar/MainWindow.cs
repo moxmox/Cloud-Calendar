@@ -118,8 +118,16 @@ namespace Cloud_Calendar
                 var focused = Controller.Focused;
                 Controller.Focused = new DateTime(focused.Year, focused.Month, selectedDay);
                 CellDialog dialog = new CellDialog(this);
+                dialog.ActionCompleted += new CellDialog.CellActionCompleteHandler(CellDialog_ActionCompleted);
                 dialog.Show();
             }
+        }
+
+        private void CellDialog_ActionCompleted(object sender, CellDialog.CellDialogActionEventArgs args)
+        {
+            Days[args.Day].AddAppointment(args.Appointment);
+            LoadMonth();
+            ColorAppointmentCells();
         }
 
         private void MainWindow_Load(object sender, EventArgs e)
