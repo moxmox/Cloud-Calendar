@@ -50,9 +50,20 @@ namespace Cloud_Calendar
             return false;
         }
 
-        public bool RemoveAppointment()
+        public void RemoveAppointment(Appointment apt)
         {
-            //TODO add code to remove appointment from list and also from database
+            Appointments.Remove(apt);
+        }
+
+        public bool RemoveAppointment(string description)
+        {
+            DatabaseConnectionController dbController = DatabaseConnectionController.GetInstance();
+            Appointment apt = new Appointment(DateInfo, description);
+            if (dbController.DeleteAppointment(apt))
+            {
+                Appointments.Remove(apt);
+                return true;
+            }
             return false;
         }
 

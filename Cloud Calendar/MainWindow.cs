@@ -62,9 +62,12 @@ namespace Cloud_Calendar
             Days = dbController.LoadEntries();
         }
 
-        private void LoadMonth ()
+        private void LoadMonth (bool clearSelectedDay = false)
         {
-            Controller.SelectedDay = DateController.NONE_SELECTED;
+            if(clearSelectedDay)
+            {
+                Controller.SelectedDay = DateController.NONE_SELECTED;
+            }
             ResetColors();
             int DaysInMonth = DateTime.DaysInMonth(Controller.Focused.Year, Controller.Focused.Month);
             DateTime FirstOfTheMonth = new DateTime(Controller.Focused.Year, Controller.Focused.Month, 1);
@@ -97,14 +100,14 @@ namespace Cloud_Calendar
             {
                 Controller.AddMonth();
                 Days = dbController.LoadEntries();
-                LoadMonth();
+                LoadMonth(clearSelectedDay: true);
                 ColorAppointmentCells();
             }
             else if (((Button)sender).Name.Equals(LeftButton.Name))
             {
                 Controller.SubtractMonth();
                 Days = dbController.LoadEntries();
-                LoadMonth();
+                LoadMonth(clearSelectedDay: true);
                 ColorAppointmentCells();
             }
         }
@@ -125,7 +128,14 @@ namespace Cloud_Calendar
 
         private void CellDialog_ActionCompleted(object sender, CellDialog.CellDialogActionEventArgs args)
         {
-            Days[args.Day].AddAppointment(args.Appointment);
+            if(args.Delete)
+            {
+                Days[args.Day].RemoveAppointment(args.Appointment);
+            }
+            else
+            {
+                Days[args.Day].AddAppointment(args.Appointment);
+            }
             LoadMonth();
             ColorAppointmentCells();
         }

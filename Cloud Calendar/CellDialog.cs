@@ -116,10 +116,22 @@ namespace Cloud_Calendar
                                             selected_time.Minute,
                                             selected_time.Second);
 
+             var duplicate_items =  from item in AptListView.Items.Cast<ListViewItem>()
+                                    where  item.SubItems[0].Text == date.ToString()
+                                    select item;
+
+            if (duplicate_items.Count() > 0)
+            {
+                string msg = string.Format("There is another event already scheduled at {0}", date);
+                MessageBox.Show(msg);
+                return;
+            }
+
             DayEntry dayEntry = new DayEntry(date);
             string description = AddDescriptionBox.Text;
             if (dayEntry.AddAppointment(description))
             {
+                AddDescriptionBox.Text = "";
                 AptListView.Items.Clear();
                 PopulateAppointmentListView();
                 Appointment apt = new Appointment(date, description);
@@ -138,6 +150,18 @@ namespace Cloud_Calendar
             string description = AptListView.SelectedItems[0].SubItems[1].Text;
             string msg = string.Format("Remove \"{0}\" at {1} from calendar?", description, dateinfo);
             DialogResult result = MessageBox.Show(msg, "Confirm", MessageBoxButtons.OKCancel);
+            if(result.Equals(DialogResult.OK))
+            {
+                DateTime dt = Convert.ToDateTime(dateinfo);
+                DayEntry dayEntry = new DayEntry(dt);
+                if(dayEntry.RemoveAppointment(description))
+                {
+                    AptListView.Items.Clear();
+                    PopulateAppointmentListView();
+                    Appointment apt = new Appointment(dt, description);
+                    ActionCompleted(this, new CellDialogActionEventArgs(CellDate.Day - 1, apt, delete: true));
+                }
+            }
         }
 
         private void AptListView_SelectedIndexChange(object sender, EventArgs args)
@@ -169,10 +193,12 @@ namespace Cloud_Calendar
         {
             public int Day;
             public Appointment Appointment;
-            public CellDialogActionEventArgs(int day, Appointment appointment)
+            public bool Delete;
+            public CellDialogActionEventArgs(int day, Appointment appointment, bool delete = false)
             {
                 Day = day;
                 Appointment = appointment;
+                Delete = delete;
             }
         }
 

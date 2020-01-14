@@ -88,6 +88,10 @@ namespace Cloud_Calendar
             return entries;
         }
 
+        // TODO: consider finding way to merge part of PushAppointment() & DeleteAppointment() 
+        // in order to reduce repetitive code; Using an UpdateAppointments() method with
+        // a MySqlCommand object passed to it could achieve same result
+        // example: UpdateAppointments(Appointment apt, MySqlCommand command);
         public bool PushAppointment(Appointment apt)
         {
             bool success = false;
@@ -104,6 +108,28 @@ namespace Cloud_Calendar
                 }
             }
             catch (MySqlException mysqlx)
+            {
+                string msg = string.Format("An error occured while updating the database: {0}", mysqlx);
+                MessageBox.Show(msg);
+            }
+            return success;
+        }
+
+        public bool DeleteAppointment(Appointment apt)
+        {
+            bool success = false;
+            string sql = @"DELETE FROM event WHERE datetime = @datetime AND description = @description";
+            MySqlCommand command = new MySqlCommand(sql, Connection);
+            command.Parameters.AddWithValue("@datetime", apt.DateInfo);
+            command.Parameters.AddWithValue("@description", apt.Description);
+            try
+            {
+                int rowsAffected = command.ExecuteNonQuery();
+                if (rowsAffected > 0)
+                {
+                    success = true;
+                }
+            }catch(MySqlException mysqlx)
             {
                 string msg = string.Format("An error occured while updating the database: {0}", mysqlx);
                 MessageBox.Show(msg);
