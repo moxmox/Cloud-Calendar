@@ -44,8 +44,10 @@ namespace Cloud_Calendar
             AddTimePicker = new DateTimePicker();
             AddTimePicker.Location = new Point(10, 10);
             AddTimePicker.Size = GENERAL_CONTROL_SIZE;
-            AddTimePicker.Format = DateTimePickerFormat.Time;
+            //AddTimePicker.Format = DateTimePickerFormat.Time;
             AddTimePicker.ShowUpDown = true;
+            AddTimePicker.Format = DateTimePickerFormat.Custom;
+            AddTimePicker.CustomFormat = "hh:mm tt";
             AddDescriptionBox = new WaterMarkTextBox("Enter event description");
             AddDescriptionBox.TextChanged += new EventHandler(AddDescriptionBox_TextChanged);
             AddDescriptionBox.Location = new Point(220, 10);

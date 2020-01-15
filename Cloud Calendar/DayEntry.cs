@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace Cloud_Calendar
 {
@@ -52,7 +53,11 @@ namespace Cloud_Calendar
 
         public void RemoveAppointment(Appointment apt)
         {
-            Appointments.Remove(apt);
+            var objectForDeletion = from a in Appointments
+                                    where (a.DateInfo == apt.DateInfo && a.Description == apt.Description)
+                                    select a;
+                                    
+            Appointments.Remove(objectForDeletion.First());
         }
 
         public bool RemoveAppointment(string description)
