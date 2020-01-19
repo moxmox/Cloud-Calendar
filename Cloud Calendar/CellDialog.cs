@@ -44,7 +44,6 @@ namespace Cloud_Calendar
             AddTimePicker = new DateTimePicker();
             AddTimePicker.Location = new Point(10, 10);
             AddTimePicker.Size = GENERAL_CONTROL_SIZE;
-            //AddTimePicker.Format = DateTimePickerFormat.Time;
             AddTimePicker.ShowUpDown = true;
             AddTimePicker.Format = DateTimePickerFormat.Custom;
             AddTimePicker.CustomFormat = "hh:mm tt";
