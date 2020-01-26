@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Data;
-using MySql.Data;
 using MySql.Data.MySqlClient;
 
 namespace Cloud_Calendar
@@ -23,10 +21,10 @@ namespace Cloud_Calendar
         {
             InitializeComponent();
 
-            this.Text = "Cloud Calendar";
-            this.MinimumSize = new Size(700, 700);
+            Text = "Cloud Calendar";
+            MinimumSize = new Size(700, 700);
 
-            MonthLabel.Location = new Point((this.Width / 2) - (MonthLabel.Width/2), 580);
+            MonthLabel.Location = new Point((Width / 2) - (MonthLabel.Width/2), 580);
             MonthLabel.Size = new Size(150, 100);
             MonthLabel.Anchor = AnchorStyles.Bottom;
             MonthLabel.Text = Controller.GetStringMonth();
@@ -42,7 +40,7 @@ namespace Cloud_Calendar
             RightButton.Text = "Right";
             RightButton.Name = "RightButton";
             RightButton.Size = new Size(80, 20);
-            RightButton.Location = new Point(this.Width-110, 600);
+            RightButton.Location = new Point(Width-110, 600);
             RightButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             RightButton.Click += new EventHandler(LeftRightButton_Click);
             LeftButton.Text = "Left";
@@ -56,6 +54,8 @@ namespace Cloud_Calendar
             Controls.Add(TableLayout);
             Controls.Add(RightButton);
             Controls.Add(LeftButton);
+
+            Menu = new CalendarMenu();
 
             DatabaseConnectionController dbController = DatabaseConnectionController.GetInstance();
             connection = dbController.Connection;

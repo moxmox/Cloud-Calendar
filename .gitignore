@@ -32,6 +32,7 @@
 *.ide-wal
 *.csprojf
 *.p7s
+*.rct
 Cloud\ Calendar/obj
 Cloud\ Calendar/Properties
 Cloud\ Calendar/bin
