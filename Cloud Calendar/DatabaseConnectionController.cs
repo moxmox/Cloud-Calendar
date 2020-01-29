@@ -16,7 +16,7 @@ namespace Cloud_Calendar
 
         private DatabaseConnectionController()
         {
-            string connectionString = @"server=192.168.0.6;userid=calendar_user;password=" + MYSQL_PASSWORD + ";database=cloud_calendar;";
+            string connectionString = @"server=68.5.17.113;userid=calendar_user;password=" + MYSQL_PASSWORD + ";database=cloud_calendar;";
             try
             {
                 Connection = new MySqlConnection(connectionString);

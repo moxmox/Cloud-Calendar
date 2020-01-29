@@ -9,9 +9,6 @@ namespace Cloud_Calendar
 {
     class CalendarMenu : MainMenu
     {
-        const string LOGIN_NAME = "LOGIN_NAME";
-        const string LOGOUT_NAME = "LOGOUT_NAME";
-        const string EXIT_NAME = "EXIT_NAME";
         MenuItem UserItem;
         MenuItem AboutItem;
         public CalendarMenu()
@@ -19,42 +16,46 @@ namespace Cloud_Calendar
             UserItem = MenuItems.Add("&User");
             AboutItem = MenuItems.Add("&About");
             MenuItem loginItem = new MenuItem("&Login");
-            loginItem.Name = LOGIN_NAME;
-            loginItem.Click += new EventHandler(UserItem_SubItemClick);
+            loginItem.Click += new EventHandler(LoginItem_Click);
             loginItem.Shortcut = Shortcut.CtrlL;
             MenuItem logoutItem = new MenuItem("&Logout");
-            logoutItem.Name = LOGOUT_NAME;
-            logoutItem.Click += new EventHandler(UserItem_SubItemClick);
+            logoutItem.Click += new EventHandler(LogoutItem_Click);
             logoutItem.Shortcut = Shortcut.CtrlC;
             logoutItem.Enabled = false;
+            MenuItem registerItem = new MenuItem("&New User");
+            registerItem.Click += new EventHandler(RegisterItem_Click);
+            registerItem.Shortcut = Shortcut.CtrlR;
             MenuItem exitItem = new MenuItem("&Exit");
-            exitItem.Name = EXIT_NAME;
-            exitItem.Click += UserItem_SubItemClick;
+            exitItem.Click += new EventHandler(ExitItem_Click);
             exitItem.Shortcut = Shortcut.CtrlX;
             UserItem.MenuItems.Add(loginItem);
             UserItem.MenuItems.Add(logoutItem);
+            UserItem.MenuItems.Add(registerItem);
             UserItem.MenuItems.Add(exitItem);
             AboutItem.Click += new EventHandler(AboutItem_Click);
         }
 
-        private void UserItem_SubItemClick(object sender, EventArgs args)
+        private void RegisterItem_Click(object sender, EventArgs args)
         {
-            string senderName = ((MenuItem)sender).Name;
-            switch(senderName)
-            {
-                case LOGIN_NAME:
-                    MessageBox.Show(LOGIN_NAME);
-                    break;
-                case LOGOUT_NAME:
-                    MessageBox.Show(LOGOUT_NAME);
-                    break;
-                case EXIT_NAME:
-                    GetForm().Close();
-                    break;
-            }
+            //TODO: implement http client to make connection to node API for registration
+            UserDialog dialog = new UserDialog();
+            dialog.Show();
         }
 
-        private void AboutItem_Click(object sender, EventArgs args)
+        private void LoginItem_Click(object sender, EventArgs args)
+        {
+            //TODO: implement http client to make connection to node API for login
+        }
+
+        private void LogoutItem_Click(object sender, EventArgs args)
+        {
+            //TODO: drop username and password; clear form
+        }
+
+        private void ExitItem_Click(object sender, EventArgs args) => GetForm().Close();
+
+        //TODO: create about window to give application information
+        private void AboutItem_Click(object sender, EventArgs args) 
         {
             MessageBox.Show("About button clicked");
         }
