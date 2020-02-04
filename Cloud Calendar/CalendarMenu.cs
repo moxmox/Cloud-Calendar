@@ -38,13 +38,15 @@ namespace Cloud_Calendar
         private void RegisterItem_Click(object sender, EventArgs args)
         {
             //TODO: implement http client to make connection to node API for registration
-            UserDialog dialog = new UserDialog();
+            RegistrationDialog dialog = new RegistrationDialog(GetForm());
             dialog.Show();
         }
 
         private void LoginItem_Click(object sender, EventArgs args)
         {
             //TODO: implement http client to make connection to node API for login
+            LoginDialog dialog = new LoginDialog(GetForm());
+            dialog.Show();
         }
 
         private void LogoutItem_Click(object sender, EventArgs args)
